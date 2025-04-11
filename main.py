@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="amrit505",
-        database="dbms")
+        password="kanu@1234",
+        database="StreamBerry")
 
 print("Connected to MySQL!")
 
@@ -188,6 +188,24 @@ def content_analytics():
     conn.close()
     
     return render_template('content_analytics.html', stats=stats)
+
+@app.route('/no-subscription-users')
+def no_subscription_users():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.user_id, a.name
+        FROM Account a
+        LEFT JOIN Subscriptions s ON a.subs_id = s.subs_id
+        WHERE COALESCE(s.subs_type, 'UNKNOWN') = 'UNKNOWN';
+    """)
+    
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return render_template('no_subscriptions_users.html', users=users)
 
 
 if __name__ == '__main__':
