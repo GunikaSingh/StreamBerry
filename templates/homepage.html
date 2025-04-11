@@ -1,0 +1,51 @@
+<!-- templates/homepage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StreamBerry - Home</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
+        h1, h2 { color: #333; }
+        .content-section { margin-bottom: 40px; }
+        .movie, .series { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .episodes { margin-top: 10px; padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to StreamBerry</h1>
+
+    <div class="content-section">
+        <h2>Movies</h2>
+        {% for movie in movies %}
+            <div class="movie">
+                <h3>{{ movie.title }}</h3>
+                <p>{{ movie.description }}</p>
+                <a href="{{ movie.url }}" target="_blank">Watch Now</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="content-section">
+        <h2>TV Shows</h2>
+        {% for series in series_list %}
+            <div class="series">
+                <h3>{{ series.title }}</h3>
+                <p>{{ series.description }}</p>
+                <div class="episodes">
+                    <strong>Episodes:</strong>
+                    <ul>
+                        {% for ep in series.episodes %}
+                            <li>
+                                Season {{ ep.season_num }}, Episode {{ ep.episode_num }}:
+                                <a href="{{ ep.url }}" target="_blank">{{ ep.episode_name }}</a><br>
+                                <small>{{ ep.description }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

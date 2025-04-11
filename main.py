@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="kanu@1234",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
@@ -32,10 +32,52 @@ def auth():
     conn.close()
 
     if user:
-        return f"Welcome, {username}!"
+        return redirect(url_for('homepage'))
     else:
         flash("Invalid username or password.")
         return redirect(url_for('login'))
+
+
+@app.route('/home')
+def homepage():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Get Movies
+    cursor.execute("""
+        SELECT content_ID, title, description, url 
+        FROM Content 
+        WHERE content_type = 'Movie' AND url IS NOT NULL
+    """)
+    movies = cursor.fetchall()
+
+    # Get TV Series
+    cursor.execute("""
+        SELECT content_ID, title, description 
+        FROM Content 
+        WHERE content_type = 'Series'
+    """)
+    series_raw = cursor.fetchall()
+
+    series_list = []
+    for s in series_raw:
+        # For each series, fetch episodes
+        cursor.execute("""
+            SELECT episode_name, episode_num, season_num, url, description
+            FROM Episode
+            WHERE content_ID = %s
+        """, (s['content_ID'],))
+        episodes = cursor.fetchall()
+        series_list.append({
+            'title': s['title'],
+            'description': s['description'],
+            'episodes': episodes
+        })
+
+    cursor.close()
+    conn.close()
+
+    return render_template('homepage.html', movies=movies, series_list=series_list)
 
 
 @app.route('/top-viewers')
