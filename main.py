@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="kanu@1234",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
@@ -36,6 +36,8 @@ def auth():
     else:
         flash("Invalid username or password.")
         return redirect(url_for('login'))
+
+
 @app.route('/top-viewers')
 def top_viewers():
     conn = get_db_connection()
@@ -54,6 +56,62 @@ def top_viewers():
     cursor.close()
     conn.close()
     return render_template('top_viewers.html', users=users)
+
+@app.route('/expired')
+def show_expired_subscriptions():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT a.user_ID, a.name, s.subs_type AS Subscription_Type, a.reg_date AS Registration_Date, 
+            CONCAT(CAST(s.validity_period AS CHAR), ' days') AS Validity_Period,
+            DATE_ADD(a.reg_date, INTERVAL s.validity_period DAY) AS Expiry_Date
+        FROM Account a
+        JOIN Subscriptions s ON a.subs_id = s.subs_id
+        WHERE DATE_ADD(a.reg_date, INTERVAL s.validity_period DAY) < NOW()
+    """)
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('expired.html', expired_accounts=data)
+
+
+@app.route('/maxed-profiles')
+def show_maxed_profiles():
+    conn=get_db_connection()
+    cursor=conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT a.user_ID, a.name, COUNT(p.profile_ID) AS profile_count, s.max_profiles
+        FROM Account a
+        JOIN Subscriptions s ON a.subs_id = s.subs_id
+        LEFT JOIN Profile p ON a.user_ID = p.user_ID
+        GROUP BY a.user_ID, a.name, s.max_profiles
+        HAVING COUNT(p.profile_ID) >= s.max_profiles;
+    """)
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('maxprofiles.html', maxed_accounts=data)
+
+@app.route('/genres-explored')
+def genres_explored():
+    conn =get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT 
+            A.user_ID AS Account_ID,
+            A.name AS Account_Name,
+            COUNT(DISTINCT CG.genre_ID) AS Genres_Explored
+        FROM Account A
+        LEFT JOIN Profile P ON A.user_ID = P.user_id
+        LEFT JOIN Profile_Watch_History W ON P.profile_ID = W.profile_ID
+        LEFT JOIN Content_Genre CG ON W.content_ID = CG.content_ID
+        GROUP BY A.user_ID, A.name;
+    """)
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('genres_explored.html', accounts=data)
+
 
 @app.route('/genre-viewers')
 def genre_viewers():
@@ -78,7 +136,6 @@ def genre_viewers():
     profiles = cursor.fetchall()
     cursor.close()
     conn.close()
-    
     return render_template('genre_viewers_kanu.html', profiles=profiles, genre_id=genre_id)
 
 @app.route('/watch-history/<int:profile_id>')
