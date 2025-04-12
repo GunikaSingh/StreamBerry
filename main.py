@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Cherry.2005",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
