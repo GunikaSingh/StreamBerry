@@ -5,40 +5,119 @@
     <meta charset="UTF-8">
     <title>StreamBerry - Home</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
-        h1, h2 { color: #333; }
-        .content-section { margin-bottom: 40px; }
-        .movie, .series { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .episodes { margin-top: 10px; padding-left: 20px; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #141414;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #e50914;
+            padding: 20px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 2.5rem;
+        }
+
+        .content-section {
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #e50914;
+            border-bottom: 2px solid #e50914;
+            display: inline-block;
+        }
+
+        .movie, .series {
+            background: #1f1f1f;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .movie:hover, .series:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+
+        .movie h3, .series h3 {
+            margin-top: 0;
+            color: #ffffff;
+        }
+
+        .movie p, .series p {
+            color: #cccccc;
+        }
+
+        a {
+            color: #e50914;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .episodes {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .episodes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .episodes li {
+            margin-bottom: 10px;
+        }
+
+        .episodes small {
+            color: #aaaaaa;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to StreamBerry</h1>
+    <header>
+        <h1>🍿 Welcome to StreamBerry</h1>
+    </header>
 
     <div class="content-section">
-        <h2>Movies</h2>
+        <h2>🎬 Movies</h2>
         {% for movie in movies %}
             <div class="movie">
                 <h3>{{ movie.title }}</h3>
                 <p>{{ movie.description }}</p>
-                <a href="{{ movie.url }}" target="_blank">Watch Now</a>
+                <a href="{{ movie.url }}" target="_blank">▶ Watch Now</a>
             </div>
         {% endfor %}
     </div>
 
     <div class="content-section">
-        <h2>TV Shows</h2>
+        <h2>📺 TV Shows</h2>
         {% for series in series_list %}
             <div class="series">
                 <h3>{{ series.title }}</h3>
                 <p>{{ series.description }}</p>
                 <div class="episodes">
-                    <strong>Episodes:</strong>
+                    <strong>📂 Episodes:</strong>
                     <ul>
                         {% for ep in series.episodes %}
                             <li>
-                                Season {{ ep.season_num }}, Episode {{ ep.episode_num }}:
-                                <a href="{{ ep.url }}" target="_blank">{{ ep.episode_name }}</a><br>
+                                <a href="{{ ep.url }}" target="_blank">S{{ ep.season_num }}E{{ ep.episode_num }}: {{ ep.episode_name }}</a><br>
                                 <small>{{ ep.description }}</small>
                             </li>
                         {% endfor %}
