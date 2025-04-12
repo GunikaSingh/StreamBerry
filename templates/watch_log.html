@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Watch Log</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: auto;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Watch History Log</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Profile Name</th>
+                <th>Content Title</th>
+                <th>Watched Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in log %}
+            <tr>
+                <td>{{ entry.prof_name }}</td>
+                <td>{{ entry.title }}</td>
+                <td>{{ entry.watched_timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

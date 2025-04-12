@@ -8,7 +8,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="kanu@1234",
+        password="Cherry.2005",
         database="StreamBerry")
 
 print("Connected to MySQL!")
@@ -248,6 +248,95 @@ def no_subscription_users():
     conn.close()
     
     return render_template('no_subscriptions_users.html', users=users)
+
+@app.route('/watch-log')
+def watch_log():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    cursor.execute("""
+        SELECT p.prof_name, c.title, wh.watched_timestamp
+FROM Profile_Watch_History wh
+JOIN Profile p ON wh.profile_id = p.profile_id
+JOIN Content c ON wh.content_id = c.content_id
+ORDER BY wh.watched_timestamp DESC;
+
+    """)
+    
+    log = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return render_template('watch_log.html', log=log)
+
+@app.route('/profile-count')
+def profile_count():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.user_id, a.name, COUNT(p.profile_id) AS total_profiles
+        FROM Account a
+        LEFT JOIN Profile p ON a.user_id = p.user_id
+        GROUP BY a.user_id, a.name
+        ORDER BY total_profiles DESC;
+    """)
+
+    profiles = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('profile_count.html', profiles=profiles)
+
+@app.route('/inactive-profiles')
+def inactive_profiles():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.name
+        FROM Account a
+        WHERE a.user_id IN (
+            SELECT p.user_id
+            FROM Profile p
+            WHERE p.profile_id NOT IN (
+                SELECT wh.profile_id
+                FROM Profile_Watch_History wh
+            )
+        );
+    """)
+
+    accounts = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('inactive_profiles.html', accounts=accounts)
+
+@app.route('/watch-history-2profiles')
+def watch_history_2profiles():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.name AS account_name, p.prof_name AS profile_name, c.title AS content_title, wh.watched_timestamp
+        FROM Account a
+        JOIN Profile p ON a.user_id = p.user_id
+        JOIN Profile_Watch_History wh ON p.profile_id = wh.profile_id
+        JOIN Content c ON wh.content_id = c.content_id
+        WHERE a.user_id IN (
+            SELECT p.user_id
+            FROM Profile p
+            GROUP BY p.user_id
+            HAVING COUNT(p.profile_id) = 2
+        )
+        ORDER BY a.name, p.prof_name, wh.watched_timestamp;
+    """)
+
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('watch_history_2profiles.html', data=data)
 
 
 if __name__ == '__main__':
