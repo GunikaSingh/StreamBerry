@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Cherry.2005",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
@@ -59,6 +59,20 @@ def select_profile():
         cursor.close()
         conn.close()
         return render_template('select_profile.html', profiles=profiles)
+
+
+@app.route('/admin')
+def admin_dashboard():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT genre_ID, genre_name FROM Genre")
+    genres = cursor.fetchall()  # Fetch all genres
+
+    cursor.close()
+    conn.close()
+
+    return render_template('admin_dashboard.html', genres=genres)
+
 
 @app.route('/home')
 def homepage():
@@ -250,11 +264,16 @@ def genres_explored():
     return render_template('genres_explored.html', accounts=data)
 
 
-@app.route('/genre-viewers')
+@app.route('/genre-viewers', methods=['GET', 'POST'])
 def genre_viewers():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    genre_id = 2  
+
+    if request.method == 'POST':
+        genre_id = request.form['genre_id']
+    else:
+        genre_id = 2
+
     cursor.execute("""
         SELECT p.profile_id, p.prof_name
         FROM Profile p
@@ -269,11 +288,17 @@ def genre_viewers():
         )
         ORDER BY p.prof_name;
     """, (genre_id,))
-    
+
     profiles = cursor.fetchall()
+
+    cursor.execute("SELECT genre_ID, genre_name FROM Genre")
+    genres = cursor.fetchall()  # Fetch all available genres for the dropdown
+
     cursor.close()
     conn.close()
-    return render_template('genre_viewers_kanu.html', profiles=profiles, genre_id=genre_id)
+
+    return render_template('genre_viewers_kanu.html', profiles=profiles, genre_id=genre_id, genres=genres)
+
 
 @app.route('/watch-history/<int:profile_id>')
 def watch_history(profile_id):
@@ -438,5 +463,3 @@ def watch_history_2profiles():
 if __name__ == '__main__':
     app.run(debug=True)
 
-if __name__ == '__main__':
-    app.run(debug=True)

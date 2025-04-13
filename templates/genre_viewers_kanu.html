@@ -85,7 +85,8 @@
   </header>
 
   <div class="container">
-    <h2>🎬 Profiles That Watched Genre ID 2</h2>
+    <h2>🎬 Profiles That Watched Genre: {{ genre_name }}</h2>
+
     {% if profiles %}
       <table>
         <thead>
@@ -107,7 +108,7 @@
       </table>
     {% else %}
       <div class="alert mt-4">
-        No profiles found for Genre ID 2!
+        No profiles found for the selected genre!
       </div>
     {% endif %}
   </div>

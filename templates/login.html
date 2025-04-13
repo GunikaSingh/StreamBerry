@@ -127,9 +127,28 @@
       <a href="#" style="color:#b3b3b3;">Need help?</a>
     </div>
 
-    <div class="signup-text">
+        <div class="signup-text">
       New to StreamBerry? <a href="/signup">Sign up now</a>
     </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="{{ url_for('admin_dashboard') }}" style="
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #444;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: background-color 0.3s ease;
+      " onmouseover="this.style.backgroundColor='#666'"
+         onmouseout="this.style.backgroundColor='#444'">
+        Admin Dashboard
+      </a>
+    </div>
   </div>
+
 </body>
 </html>
