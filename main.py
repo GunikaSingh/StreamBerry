@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 import mysql.connector
 
 app = Flask(__name__)
@@ -8,12 +8,10 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="legio28",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
-
-app = Flask(__name__)
 
 @app.route('/')
 def login():
@@ -25,25 +23,51 @@ def auth():
     password = request.form['email']
 
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM account WHERE name = %s AND email = %s", (username, password))
     user = cursor.fetchone()
-    cursor.close()
-    conn.close()
 
     if user:
-        return redirect(url_for('homepage'))
+        session['user_id'] = user['user_ID']
+        session['name'] = user['name']
+        cursor.execute("SELECT profile_ID, prof_name FROM Profile WHERE user_ID = %s", (user['user_ID'],))
+        profiles = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return render_template('select_profile.html', profiles=profiles)
     else:
+        cursor.close()
+        conn.close()
         flash("Invalid username or password.")
         return redirect(url_for('login'))
 
+@app.route('/select-profile', methods=['GET', 'POST'])
+def select_profile():
+    if request.method == 'POST':
+        profile_id = request.form['profile_id']
+        session['profile_id'] = profile_id
+        return redirect(url_for('homepage'))
+    else:
+        user_id = session.get('user_id')
+        if not user_id:
+            return redirect(url_for('login'))
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT profile_ID, prof_name FROM Profile WHERE user_ID = %s", (user_id,))
+        profiles = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return render_template('select_profile.html', profiles=profiles)
 
 @app.route('/home')
 def homepage():
+    if 'profile_id' not in session:
+        return redirect(url_for('login'))
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Get Movies
     cursor.execute("""
         SELECT content_ID, title, description, url 
         FROM Content 
@@ -51,7 +75,6 @@ def homepage():
     """)
     movies = cursor.fetchall()
 
-    # Get TV Series
     cursor.execute("""
         SELECT content_ID, title, description 
         FROM Content 
@@ -61,7 +84,6 @@ def homepage():
 
     series_list = []
     for s in series_raw:
-        # For each series, fetch episodes
         cursor.execute("""
             SELECT episode_name, episode_num, season_num, url, description
             FROM Episode
@@ -78,6 +100,31 @@ def homepage():
     conn.close()
 
     return render_template('homepage.html', movies=movies, series_list=series_list)
+
+@app.route('/create-profile', methods=['GET', 'POST'])
+def create_profile():
+    if request.method == 'POST':
+        prof_name = request.form['prof_name']
+        user_id = session.get('user_id')
+
+        if not user_id:
+            return redirect(url_for('login'))
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT MAX(profile_ID) FROM Profile")
+        last_id = cursor.fetchone()[0]
+        new_id = 1 if last_id is None else last_id + 1
+
+        cursor.execute("INSERT INTO Profile (profile_ID, user_ID, prof_name) VALUES (%s, %s, %s)",
+                       (new_id, user_id, prof_name))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for('select_profile'))
+
+    return render_template('create_profile.html')
 
 
 @app.route('/top-viewers')
@@ -259,9 +306,10 @@ def watch_log():
 FROM Profile_Watch_History wh
 JOIN Profile p ON wh.profile_id = p.profile_id
 JOIN Content c ON wh.content_id = c.content_id
+WHERE p.profile_ID = %s
 ORDER BY wh.watched_timestamp DESC;
 
-    """)
+    """,(session['profile_id'],))
     
     log = cursor.fetchall()
     cursor.close()

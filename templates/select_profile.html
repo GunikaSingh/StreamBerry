@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Profile</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        h2 {
+            color: #ff3b3f;
+            margin-bottom: 50px;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .profile-card {
+            background-color: #222;
+            border: 2px solid #ff3b3f;
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 15px rgba(255, 59, 63, 0.7);
+        }
+
+        .profile-card h3 {
+            color: #ff3b3f;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .profile-card button {
+            background-color: #ff3b3f;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .profile-card button:hover {
+            background-color: #e63033;
+            transform: scale(1.05);
+        }
+
+        .create-profile-btn {
+            background-color: #222;
+            border: 2px dashed #ff3b3f;
+            color: #ff3b3f;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-top: 50px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .create-profile-btn:hover {
+            background-color: #ff3b3f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Select Your Profile</h2>
+
+    <div class="profile-container">
+        {% for profile in profiles %}
+        <div class="profile-card">
+            <h3>{{ profile.prof_name }}</h3>
+            <form method="POST" action="{{ url_for('select_profile') }}">
+                <input type="hidden" name="profile_id" value="{{ profile.profile_ID }}">
+                <button type="submit">Select</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('create_profile') }}" class="create-profile-btn">+ Create New Profile</a>
+
+</body>
+</html>
