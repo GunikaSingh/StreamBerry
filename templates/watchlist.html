@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StreamBerry - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Watchlist - StreamBerry</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -17,7 +18,6 @@
             padding: 20px 40px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            position: relative;
         }
 
         header h1 {
@@ -61,7 +61,7 @@
             display: inline-block;
         }
 
-        .movie, .series {
+        .watchlist-item {
             background: #1f1f1f;
             padding: 20px;
             margin: 15px 0;
@@ -70,17 +70,12 @@
             transition: transform 0.2s, box-shadow 0.3s;
         }
 
-        .movie:hover, .series:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-        }
-
-        .movie h3, .series h3 {
+        .watchlist-item h3 {
             margin-top: 0;
             color: #ffffff;
         }
 
-        .movie p, .series p {
+        .watchlist-item p {
             color: #cccccc;
         }
 
@@ -93,65 +88,30 @@
         a:hover {
             text-decoration: underline;
         }
-
-        .episodes {
-            margin-top: 15px;
-            padding-left: 20px;
-        }
-
-        .episodes ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .episodes li {
-            margin-bottom: 10px;
-        }
-
-        .episodes small {
-            color: #aaaaaa;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>🍿 Welcome to StreamBerry</h1>
+        <h1>Your Watchlist 📋</h1>
         <div class="header-buttons">
             <a href="{{ url_for('watch_log') }}">📜 View Watch History</a>
-            <a href="{{ url_for('watchlist') }}">📋 View Watchlist</a>  <!-- New button here -->
+            <a href="{{ url_for('homepage') }}">🏠 Home</a>
         </div>
     </header>
 
     <div class="content-section">
-        <h2>🎬 Movies</h2>
-        {% for movie in movies %}
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.description }}</p>
-                <a href="{{ movie.url }}" target="_blank">▶ Watch Now</a>
-            </div>
-        {% endfor %}
-    </div>
-
-    <div class="content-section">
-        <h2>📺 TV Shows</h2>
-        {% for series in series_list %}
-            <div class="series">
-                <h3>{{ series.title }}</h3>
-                <p>{{ series.description }}</p>
-                <div class="episodes">
-                    <strong>📂 Episodes:</strong>
-                    <ul>
-                        {% for ep in series.episodes %}
-                            <li>
-                                <a href="{{ ep.url }}" target="_blank">S{{ ep.season_num }}E{{ ep.episode_num }}: {{ ep.episode_name }}</a><br>
-                                <small>{{ ep.description }}</small>
-                            </li>
-                        {% endfor %}
-                    </ul>
+        {% if watchlist_content %}
+            <h2>🎬 Movies in Watchlist</h2>
+            {% for content in watchlist_content %}
+                <div class="watchlist-item">
+                    <h3>{{ content.title }}</h3>
+                    <p>{{ content.description }}</p>
+                    <a href="{{ content.url }}" target="_blank">▶ Watch Now</a>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p>Your watchlist is empty!</p>
+        {% endif %}
     </div>
 </body>
 </html>

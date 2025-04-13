@@ -225,6 +225,28 @@ def show_expired_subscriptions():
     conn.close()
     return render_template('expired.html', expired_accounts=data)
 
+@app.route('/watchlist')
+def watchlist():
+    profile_id = session.get('profile_id')
+    if not profile_id:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT c.content_ID, c.title, c.description, c.url
+        FROM Content c
+        JOIN Watchlist_Content wc ON c.content_ID = wc.content_ID
+        WHERE wc.profile_ID = %s
+    """, (profile_id,))
+
+    watchlist_content = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('watchlist.html', watchlist_content=watchlist_content)
+
 
 @app.route('/maxed-profiles')
 def show_maxed_profiles():
@@ -272,7 +294,7 @@ def genre_viewers():
     if request.method == 'POST':
         genre_id = request.form['genre_id']
     else:
-        genre_id = 2
+        genre_id = 2 #hardcodingg
 
     cursor.execute("""
         SELECT p.profile_id, p.prof_name

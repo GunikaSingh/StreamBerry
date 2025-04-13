@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Watch Log</title>
     <style>
         body {
@@ -9,6 +10,38 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+        }
+        header {
+            background-color: #e50914;
+            padding: 20px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 2.5rem;
+        }
+        .header-buttons {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+        }
+        .header-buttons a {
+            background-color: #fff;
+            color: #e50914;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, color 0.3s;
+            margin-left: 10px;
+        }
+        .header-buttons a:hover {
+            background-color: #e50914;
+            color: #fff;
         }
         h2 {
             text-align: center;
@@ -42,6 +75,14 @@
     </style>
 </head>
 <body>
+    <header>
+        <h1>📜 Watch History Log</h1>
+        <div class="header-buttons">
+            <a href="{{ url_for('watchlist') }}">📋 View Watchlist</a>
+            <a href="{{ url_for('homepage') }}">🏠 Home</a>
+        </div>
+    </header>
+
     <h2>Watch History Log</h2>
     <table>
         <thead>
