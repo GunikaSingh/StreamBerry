@@ -111,6 +111,22 @@
         .episodes small {
             color: #aaaaaa;
         }
+
+        /* New styles for Genre filter */
+        .genre-filter {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 1.1rem;
+            background-color: #1f1f1f;
+            color: #e50914;
+            border: 2px solid #e50914;
+            border-radius: 8px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -118,10 +134,24 @@
         <h1>🍿 Welcome to StreamBerry</h1>
         <div class="header-buttons">
             <a href="{{ url_for('watch_log') }}">📜 View Watch History</a>
-            <a href="{{ url_for('watchlist') }}">📋 View Watchlist</a>  <!-- New button here -->
+            <a href="{{ url_for('watchlist') }}">📋 View Watchlist</a>
         </div>
     </header>
 
+    <!-- Genre Filter Dropdown -->
+    <div class="genre-filter">
+        <form method="get" action="{{ url_for('homepage') }}">
+            <label for="genre" style="color: #fff; font-size: 1.2rem; font-weight: bold;">🎯 Filter by Genre:</label>
+            <select name="genre" id="genre" onchange="this.form.submit()">
+                <option value="All" {% if not selected_genre or selected_genre == 'All' %}selected{% endif %}>All</option>
+                {% for genre in genres %}
+                    <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <!-- Movies Section -->
     <div class="content-section">
         <h2>🎬 Movies</h2>
         {% for movie in movies %}
@@ -133,6 +163,7 @@
         {% endfor %}
     </div>
 
+    <!-- Series Section -->
     <div class="content-section">
         <h2>📺 TV Shows</h2>
         {% for series in series_list %}
@@ -153,5 +184,6 @@
             </div>
         {% endfor %}
     </div>
+
 </body>
 </html>

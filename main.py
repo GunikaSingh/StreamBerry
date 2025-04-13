@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="amrit505",
-        database="dbms")
+        password="kanu@1234",
+        database="StreamBerry")
 
 print("Connected to MySQL!")
 
@@ -74,26 +74,56 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', genres=genres)
 
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def homepage():
     if 'profile_id' not in session:
         return redirect(url_for('login'))
 
+    selected_genre = request.args.get('genre')  # From dropdown
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Fetch all distinct genres linked to either movies or series in content_genre
     cursor.execute("""
-        SELECT content_ID, title, description, url 
-        FROM Content 
-        WHERE content_type = 'Movie' AND url IS NOT NULL
+        SELECT DISTINCT g.genre_name
+        FROM Genre g
+        JOIN Content_Genre cg ON g.genre_ID = cg.genre_ID
     """)
+    genres = [row['genre_name'] for row in cursor.fetchall()]
+
+    # Query for Movies based on genre
+    if selected_genre and selected_genre != "All":
+        cursor.execute("""
+            SELECT c.content_ID, c.title, c.description, c.url
+            FROM Content c
+            JOIN Content_Genre cg ON c.content_ID = cg.content_ID
+            JOIN Genre g ON cg.genre_ID = g.genre_ID
+            WHERE c.content_type = 'Movie' AND g.genre_name = %s AND c.url IS NOT NULL
+        """, (selected_genre,))
+    else:
+        cursor.execute("""
+            SELECT content_ID, title, description, url 
+            FROM Content 
+            WHERE content_type = 'Movie' AND url IS NOT NULL
+        """)
     movies = cursor.fetchall()
 
-    cursor.execute("""
-        SELECT content_ID, title, description 
-        FROM Content 
-        WHERE content_type = 'Series'
-    """)
+    # Query for Series based on genre
+    if selected_genre and selected_genre != "All":
+        cursor.execute("""
+            SELECT c.content_ID, c.title, c.description
+            FROM Content c
+            JOIN Content_Genre cg ON c.content_ID = cg.content_ID
+            JOIN Genre g ON cg.genre_ID = g.genre_ID
+            WHERE c.content_type = 'Series' AND g.genre_name = %s
+        """, (selected_genre,))
+    else:
+        cursor.execute("""
+            SELECT content_ID, title, description 
+            FROM Content 
+            WHERE content_type = 'Series'
+        """)
     series_raw = cursor.fetchall()
 
     series_list = []
@@ -113,8 +143,9 @@ def homepage():
     cursor.close()
     conn.close()
 
-    return render_template('homepage.html', movies=movies, series_list=series_list)
+    return render_template('homepage.html', movies=movies, series_list=series_list, genres=genres, selected_genre=selected_genre)
 
+    
 
 #-----------sign up page-----------------
 @app.route('/signup', methods=['GET', 'POST'])
