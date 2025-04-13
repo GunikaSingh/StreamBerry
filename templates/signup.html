@@ -2,20 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>StreamBerry Sign In</title>
+  <title>StreamBerry Sign Up</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Roboto', sans-serif;
       background: url('https://assets.nflxext.com/ffe/siteui/vlv3/1e53700e-4850-44a6-bc4e-8a0595fa50c1/3a1c01ae-71db-4324-9a89-61d54059de6c/IN-en-20240318-popsignuptwoweeks-perspective_alpha_website_medium.jpg') no-repeat center center/cover;
       height: 100vh;
-      position: relative;
+      margin: 0;
       color: white;
     }
 
@@ -27,40 +21,40 @@
       z-index: 0;
     }
 
-    .login-box {
+    .signup-box {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background-color: rgba(0, 0, 0, 0.75);
-      padding: 60px 68px 40px;
-      width: 350px;
+      padding: 40px;
+      width: 400px;
       border-radius: 4px;
       z-index: 1;
     }
 
-    .login-box h2 {
-      margin-bottom: 30px;
-      font-size: 2rem;
-      font-weight: 700;
+    h2 {
+      margin-bottom: 20px;
     }
 
-    .login-box input[type="text"],
-    .login-box input[type="password"] {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
       width: 100%;
       padding: 12px;
-      margin-bottom: 16px;
+      margin: 10px 0;
       border: none;
       border-radius: 4px;
       background: #333;
       color: white;
     }
 
-    .login-box input::placeholder {
-      color: #bbb;
+    select {
+      background: #444;
     }
 
-    .login-box input[type="submit"] {
+    input[type="submit"] {
       width: 100%;
       background-color: #e50914;
       color: white;
@@ -68,33 +62,9 @@
       border: none;
       border-radius: 4px;
       font-weight: bold;
-      cursor: pointer;
       font-size: 1rem;
-      margin-top: 10px;
-    }
-
-    .login-box input[type="submit"]:hover {
-      background-color: #f6121d;
-    }
-
-    .extra {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-      font-size: 0.85rem;
-      color: #b3b3b3;
-    }
-
-    .signup-text {
-      margin-top: 40px;
-      font-size: 0.9rem;
-      color: #b3b3b3;
-    }
-
-    .signup-text a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
     }
 
     .flash {
@@ -102,34 +72,38 @@
       text-align: center;
       margin-bottom: 15px;
     }
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <div class="overlay"></div>
+  <div class="signup-box">
+    <h2>Create Your Account</h2>
 
-  <div class="login-box">
-    <h2>Sign In</h2>
-    
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <div class="flash">{{ messages[0] }}</div>
       {% endif %}
     {% endwith %}
 
-    <form method="POST" action="/auth">
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="password" name="email" placeholder="Email" required>
-      <input type="submit" value="Sign In">
+    <form method="POST" action="{{ url_for('signup') }}">
+        <input type="text" name="name" placeholder="Full Name" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="date" name="dob" required><br>
+    
+        <label>Select Subscription Plan:</label><br>
+        <select name="subs_id" required>
+        {% for sub in subscriptions %}
+            <option value="{{ sub.subs_id }}">{{ sub.subs_type }}</option>
+        {% endfor %}
+        </select><br><br>
+    
+        <input type="submit" value="Sign Up">
     </form>
-
-    <div class="extra">
-      <label><input type="checkbox"> Remember me</label>
-      <a href="#" style="color:#b3b3b3;">Need help?</a>
-    </div>
-
-    <div class="signup-text">
-      New to StreamBerry? <a href="/signup">Sign up now</a>
-    </div>
   </div>
 </body>
 </html>

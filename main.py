@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 import mysql.connector
-
+from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "lol"
 
@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="amrit505",
-        database="dbms")
+        password="kanu@1234",
+        database="StreamBerry")
 
 print("Connected to MySQL!")
 
@@ -100,6 +100,54 @@ def homepage():
     conn.close()
 
     return render_template('homepage.html', movies=movies, series_list=series_list)
+
+
+#-----------sign up page-----------------
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        dob = request.form.get('dob')
+        subs_id = request.form.get('subs_id')
+        reg_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        try:
+            # Get last user_id
+            cursor.execute("SELECT MAX(user_id) AS max_id FROM account")
+            result = cursor.fetchone()
+            next_user_id = (result['max_id'] or 0) + 1
+
+            # Insert user data with manual user_id
+            cursor.execute("""
+                INSERT INTO account (user_id, name, email, dob, reg_date, subs_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (next_user_id, name, email, dob, reg_date, subs_id))
+            conn.commit()
+
+            flash('Signup successful! Please log in.')
+            return redirect(url_for('login'))
+
+        except mysql.connector.Error as err:
+            flash(f"Error: {err}")
+            return redirect(url_for('signup'))
+
+    # Fetch subscriptions for dropdown
+    try:
+        cursor.execute("SELECT subs_id, subs_type FROM subscriptions")
+        subscriptions = cursor.fetchall()
+    except mysql.connector.Error as err:
+        flash(f"Error fetching subscriptions: {err}")
+        subscriptions = []
+
+    cursor.close()
+    conn.close()
+
+    return render_template('signup.html', subscriptions=subscriptions)
+#------------------------------------------------
 
 @app.route('/create-profile', methods=['GET', 'POST'])
 def create_profile():
