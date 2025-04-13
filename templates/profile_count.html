@@ -1,42 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Profile Count per User</title>
+    <meta charset="UTF-8">
+    <title>StreamBerry - Profile Count per User</title>
     <style>
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #141414;
+            color: #fff;
+            margin: 0;
+            padding: 0;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid #aaa;
-            text-align: left;
-        }
-        h2 {
+
+        header {
+            background-color: #e50914;
+            padding: 20px 40px;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 2.5rem;
+        }
+
+        .content-section {
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #e50914;
+            border-bottom: 2px solid #e50914;
+            display: inline-block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1f1f1f;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #292929;
+            color: #e50914;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        tr:hover {
+            background-color: #3a3a3a;
+        }
+
+        td {
+            color: #f0f0f0;
+        }
+
+        .no-data {
+            margin-top: 20px;
+            color: #ccc;
+            font-style: italic;
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
-    <h2>Number of Profiles per User</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Total Profiles</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in profiles %}
-            <tr>
-                <td>{{ row.user_id }}</td>
-                <td>{{ row.name }}</td>
-                <td>{{ row.total_profiles }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <header>
+        <h1>📊 Profile Count per User</h1>
+    </header>
+
+    <div class="content-section">
+        <h2>List of Users and Their Profile Counts</h2>
+
+        {% if profiles %}
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Total Profiles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in profiles %}
+                <tr>
+                    <td>{{ row.user_id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.total_profiles }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">No profile data available.</p>
+        {% endif %}
+    </div>
 </body>
 </html>

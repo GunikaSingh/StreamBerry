@@ -2,83 +2,135 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Content Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>StreamBerry - Content Analytics</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #1f1c2c, #928dab);
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #141414;
             color: #fff;
             margin: 0;
             padding: 0;
         }
 
-        h2 {
+        header {
+            background-color: #e50914;
+            padding: 20px 40px;
             text-align: center;
-            padding: 30px 0 10px;
-            font-size: 32px;
-            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .content-section {
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #e50914;
+            border-bottom: 2px solid #e50914;
+            display: inline-block;
         }
 
         table {
+            width: 100%;
             border-collapse: collapse;
-            width: 90%;
-            margin: 0 auto 50px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            background: rgba(255, 255, 255, 0.05);
+            margin-top: 20px;
+            background-color: #1f1f1f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border-radius: 12px;
             overflow: hidden;
         }
 
         th, td {
-            padding: 14px 18px;
+            padding: 16px;
             text-align: center;
         }
 
         th {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            font-weight: 600;
+            background-color: #292929;
+            color: #e50914;
             text-transform: uppercase;
         }
 
         tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.04);
+            background-color: #2a2a2a;
         }
 
         tr:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
+            background-color: #3a3a3a;
         }
 
         td {
             color: #f0f0f0;
         }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                background-color: #1f1f1f;
+                border-radius: 8px;
+                padding: 12px;
+            }
+
+            td {
+                text-align: left;
+                padding: 10px 20px;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                color: #e50914;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>📊 Content Analytics by Type and Genre</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Content Type</th>
-                <th>Genre</th>
-                <th>Content Count</th>
-                <th>Average Duration (mins)</th>
-                <th>Total Views</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in stats %}
-            <tr>
-                <td>{{ row.content_type }}</td>
-                <td>{{ row.genre_name }}</td>
-                <td>{{ row.content_count }}</td>
-                <td>{{ row.avg_duration | round(2) }}</td>
-                <td>{{ row.total_views }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <header>
+        <h1>📈 StreamBerry Analytics</h1>
+    </header>
+
+    <div class="content-section">
+        <h2>📊 Content by Type & Genre</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Content Type</th>
+                    <th>Genre</th>
+                    <th>Content Count</th>
+                    <th>Avg. Duration (mins)</th>
+                    <th>Total Views</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in stats %}
+                <tr>
+                    <td>{{ row.content_type }}</td>
+                    <td>{{ row.genre_name }}</td>
+                    <td>{{ row.content_count }}</td>
+                    <td>{{ row.avg_duration | round(2) }}</td>
+                    <td>{{ row.total_views }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
