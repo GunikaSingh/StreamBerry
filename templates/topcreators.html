@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Top Watchers</title>
+  <title>Top Content Creators</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -25,25 +25,23 @@
 </head>
 <body>
   <div class="container">
-    <h2>🔥 Most Active Viewers</h2>
+    <h2>🏆 Creators with Above Average Content</h2>
     <table class="table table-striped text-center shadow">
       <thead class="table-dark">
         <tr>
-          <th scope="col">User ID</th>
+          <th scope="col">Creator ID</th>
           <th scope="col">Name</th>
-          <th scope="col">Total Watched</th>
         </tr>
       </thead>
       <tbody>
-        {% for user in top_watchers %}
+        {% for creator in top_creators %}
         <tr>
-          <td>{{ user.user_ID }}</td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.total_watched }}</td>
+          <td>{{ creator.creator_ID }}</td>
+          <td>{{ creator.name }}</td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="3">No watch data found.</td>
+          <td colspan="2">No creators found.</td>
         </tr>
         {% endfor %}
       </tbody>

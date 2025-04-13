@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Expired Subscriptions</title>
+  <title>Inactive Profile Accounts</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -25,31 +25,23 @@
 </head>
 <body>
   <div class="container">
-    <h2>⏰ Expired Subscriptions</h2>
+    <h2>🚫 Accounts with Inactive Profiles</h2>
     <table class="table table-striped text-center shadow">
       <thead class="table-dark">
         <tr>
           <th scope="col">User ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Subscription Type</th>
-          <th scope="col">Registration Date</th>
-          <th scope="col">Validity Period</th>
-          <th scope="col">Expiry Date</th>
+          <th scope="col">Account Name</th>
         </tr>
       </thead>
       <tbody>
-        {% for acc in expired_subs %}
+        {% for acc in inactive_accounts %}
         <tr>
           <td>{{ acc.user_ID }}</td>
           <td>{{ acc.name }}</td>
-          <td>{{ acc.Subscription_Type }}</td>
-          <td>{{ acc.Registration_Date }}</td>
-          <td>{{ acc.Validity_Period }}</td>
-          <td>{{ acc.Expiry_Date }}</td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="6">All subscriptions are active.</td>
+          <td colspan="2">No inactive profiles found.</td>
         </tr>
         {% endfor %}
       </tbody>
