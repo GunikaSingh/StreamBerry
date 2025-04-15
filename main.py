@@ -8,7 +8,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="kanu@1234",
+        password="legio28",
         database="StreamBerry")
 
 print("Connected to MySQL!")
@@ -291,7 +291,7 @@ def top_viewers():
     conn.close()
     return render_template('top_viewers.html', users=users)
 
-@app.route('/admin/top-creators')
+@app.route('/top-creators')
 def top_creators():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
