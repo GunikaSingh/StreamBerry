@@ -74,6 +74,55 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', genres=genres)
 
 
+@app.route('/watch/<int:id>')
+def watch_content(id):
+    if 'profile_id' not in session:
+        return redirect(url_for('login'))
+
+    profile_id = session['profile_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Try treating it as a movie (content_ID)
+    cursor.execute("SELECT url FROM Content WHERE content_ID = %s", (id,))
+    result = cursor.fetchone()
+    is_episode = False
+
+    # If not found, treat it as an episode (episode_ID)
+    if not result or not result[0]:
+        cursor.execute("SELECT url, content_ID FROM Episode WHERE episode_ID = %s", (id,))
+        result = cursor.fetchone()
+        is_episode = True
+
+    if result and result[0]:
+        # Use correct content_ID for watch history
+        actual_content_id = id if not is_episode else result[1]
+
+        # Check if already in history
+        cursor.execute("""
+            SELECT 1 FROM profile_watch_history
+            WHERE profile_id = %s AND content_id = %s
+        """, (profile_id, actual_content_id))
+        exists = cursor.fetchone()
+
+        if not exists:
+            cursor.execute("""
+                INSERT INTO profile_watch_history (profile_id, content_id, watched_timestamp)
+                VALUES (%s, %s, NOW())
+            """, (profile_id, actual_content_id))  # `actual_content_id` should always be correct here.
+
+        # If everything is working correctly, the URL should be returned, and the watch history should be updated for both movies and episodes.
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(result[0])
+
+    cursor.close()
+    conn.close()
+    return "Content not found or URL missing", 404
+
+
 @app.route('/home', methods=['GET', 'POST'])
 def homepage():
     if 'profile_id' not in session:
@@ -118,6 +167,7 @@ def homepage():
             JOIN Genre g ON cg.genre_ID = g.genre_ID
             WHERE c.content_type = 'Series' AND g.genre_name = %s
         """, (selected_genre,))
+        print("selected series before linking")
     else:
         cursor.execute("""
             SELECT content_ID, title, description 
@@ -128,24 +178,25 @@ def homepage():
 
     series_list = []
     for s in series_raw:
-        cursor.execute("""
-            SELECT episode_name, episode_num, season_num, url, description
+        # Create a new cursor for episode query to avoid unread result issue
+        cursor2 = conn.cursor(dictionary=True)
+        cursor2.execute("""
+            SELECT episode_ID, content_ID, episode_name, episode_num, season_num, url, description
             FROM Episode
             WHERE content_ID = %s
         """, (s['content_ID'],))
-        episodes = cursor.fetchall()
+
+        episodes = cursor2.fetchall()
+        cursor2.close()
+
         series_list.append({
             'title': s['title'],
             'description': s['description'],
             'episodes': episodes
         })
 
-    cursor.close()
-    conn.close()
 
     return render_template('homepage.html', movies=movies, series_list=series_list, genres=genres, selected_genre=selected_genre)
-
-    
 
 #-----------sign up page-----------------
 @app.route('/signup', methods=['GET', 'POST'])
