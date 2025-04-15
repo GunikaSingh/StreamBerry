@@ -26,13 +26,21 @@
             font-size: 2.5rem;
         }
 
-        .header-buttons {
+
+        .left-buttons, .right-buttons {
             position: absolute;
             top: 20px;
+        }
+
+        .left-buttons {
+            left: 40px;
+        }
+
+        .right-buttons {
             right: 40px;
         }
 
-        .header-buttons a {
+        .left-buttons a, .right-buttons a {
             background-color: #fff;
             color: #e50914;
             padding: 10px 20px;
@@ -44,10 +52,11 @@
             margin-left: 10px;
         }
 
-        .header-buttons a:hover {
+        .left-buttons a:hover, .right-buttons a:hover {
             background-color: #e50914;
             color: #fff;
         }
+
 
         .content-section {
             padding: 40px;
@@ -149,9 +158,12 @@
 <body>
     <header>
         <h1>🍿 Welcome to StreamBerry</h1>
-        <div class="header-buttons">
+        <div class="left-buttons">
             <a href="{{ url_for('watch_log') }}">📜 View Watch History</a>
+        </div>
+        <div class="right-buttons">
             <a href="{{ url_for('watchlist') }}">📋 View Watchlist</a>
+            <a href="{{ url_for('login') }}">🚪 Logout</a>
         </div>
     </header>
     <!-- Genre Filter Dropdown -->
