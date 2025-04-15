@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="kanu@1234",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
@@ -190,6 +190,7 @@ def homepage():
         cursor2.close()
 
         series_list.append({
+            'content_ID': s['content_ID'],  # <-- this is the fix
             'title': s['title'],
             'description': s['description'],
             'episodes': episodes
@@ -402,6 +403,40 @@ def genre_viewers():
     conn.close()
 
     return render_template('genre_viewers_kanu.html', profiles=profiles, genre_id=genre_id, genres=genres)
+@app.route('/add-to-watchlist', methods=['POST'])
+def add_to_watchlist():
+    profile_id = session.get('profile_id')
+    content_id = request.form.get('content_id')
+
+    if not profile_id or not content_id:
+        flash("You must be logged in with a profile to add to watchlist.")
+        return redirect(url_for('homepage'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Prevent duplicates
+    cursor.execute("""
+        SELECT 1 FROM Watchlist_Content
+        WHERE profile_ID = %s AND content_ID = %s
+    """, (profile_id, content_id))
+    exists = cursor.fetchone()
+
+    if not exists:
+        cursor.execute("""
+            INSERT INTO Watchlist_Content (profile_ID, content_ID)
+            VALUES (%s, %s)
+        """, (profile_id, content_id))
+        conn.commit()
+        flash("Added to watchlist!")
+
+    else:
+        flash("Already in watchlist.")
+
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('homepage'))
 
 
 @app.route('/watch-history/<int:profile_id>')

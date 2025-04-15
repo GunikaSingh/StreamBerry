@@ -69,6 +69,23 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             transition: transform 0.2s, box-shadow 0.3s;
         }
+        .add-watchlist-btn {
+            background-color: #e50914;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+            margin-top: -35px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .add-watchlist-btn:hover {
+            background-color: #b20710;
+        }
 
         .movie:hover, .series:hover {
             transform: translateY(-5px);
@@ -154,12 +171,19 @@
     <div class="content-section">
         <h2>🎬 Movies</h2>
         {% for movie in movies %}
-            <div class="movie">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.description }}</p>
-                <a href="{{ url_for('watch_content', id=movie.content_ID) }}" target="_blank">▶ Watch Now</a>
-            </div>
-        {% endfor %}
+    <div class="movie">
+        <h3>{{ movie.title }}</h3>
+        <p>{{ movie.description }}</p>
+        <a href="{{ url_for('watch_content', id=movie.content_ID) }}">Watch</a>
+
+        <form action="{{ url_for('add_to_watchlist') }}" method="post">
+            <input type="hidden" name="content_id" value="{{ movie.content_ID }}">
+            <button type="submit" class="add-watchlist-btn">➕ Add to Watchlist</button>
+        </form>
+
+    </div>
+{% endfor %}
+
     </div>
 
     <!-- Series Section -->
@@ -169,6 +193,10 @@
             <div class="series">
                 <h3>{{ series.title }}</h3>
                 <p>{{ series.description }}</p>
+                <form action="{{ url_for('add_to_watchlist') }}" method="post">
+                    <input type="hidden" name="content_id" value="{{ series.content_ID }}">
+                    <button type="submit" class="add-watchlist-btn">➕ Add to Watchlist</button>
+                </form>
                 <div class="episodes">
                     <strong>📂 Episodes:</strong>
                     <ul>
