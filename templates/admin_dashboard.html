@@ -31,13 +31,6 @@
       overflow-y: auto;
     }
 
-    .sidebar h2 {
-      color: red;
-      margin-bottom: 40px;
-      font-size: 1.8rem;
-      text-align: center;
-    }
-
     .sidebar a {
       color: white;
       text-decoration: none;
@@ -60,10 +53,33 @@
       background-color: #1c1c1c;
     }
 
+    /* Updated ribbon section */
+    .ribbon {
+      background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f562aaf4-5dbb-4603-a32b-6ef6c2230136/dh0w8qv-9d8ee6b2-b41a-4681-ab9b-8a227560dc75.jpg/v1/fill/w_1280,h_720,q_75,strp/the_netflix_login_background__canada__2024___by_logofeveryt_dh0w8qv-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6IlwvZlwvZjU2MmFhZjQtNWRiYi00NjAzLWEzMmItNmVmNmMyMjMwMTM2XC9kaDB3OHF2LTlkOGVlNmIyLWI0MWEtNDY4MS1hYjliLThhMjI3NTYwZGM3NS5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.LOYKSxIDqfPwWHR0SSJ-ugGQ6bECF0yO6Cmc0F26CQs'); /* replace with your image URL */
+      background-size: cover;
+      background-position: center;
+      padding: 40px 0; /* Increased padding for bigger ribbon */
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+      font-size: 3rem; /* Increased font size */
+      font-weight: bold;
+      position: relative;
+      top: 20px;
+      opacity: 0.85; /* Slightly more translucency */
+    }
+
+    .sidebar h2 {
+      color: red;
+      margin-bottom: 40px;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
     .main h1 {
       font-size: 2.5rem;
       margin-bottom: 30px;
-      color: red;
+      color: white; /* updated to white */
     }
 
     .info-block {
@@ -72,6 +88,7 @@
       border-radius: 12px;
       margin-bottom: 40px;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+      margin-top: 60px; /* Added margin-top to move it lower */
     }
 
     .info-block h2 {
@@ -119,16 +136,37 @@
     .genre-form button:hover {
       background-color: #ff1f1f;
     }
+
+    /* Logout button styling */
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: #e50914;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #ff2a2a;
+    }
   </style>
 </head>
 <body>
+  <a href="/" class="logout-btn">🔓 Logout</a>
+
   <div class="sidebar">
     <h2>Admin Dashboard</h2>
     <a href="/top-viewers">Top Viewers</a>
+    <a href="/admin/top-creators" class="admin-btn">Top Creators</a>
     <a href="/expired">Expired Subscriptions</a>
     <a href="/maxed-profiles">Maxed Profiles</a>
     <a href="/genres-explored">Genres Explored</a>
-
     <a href="/content-analytics">Content Analytics</a>
     <a href="/no-subscription-users">No Subscription Users</a>
     <a href="/profile-count">Profile Count</a>
@@ -150,7 +188,9 @@
   </div>
 
   <div class="main">
-    <h1>Welcome to the Admin Dashboard</h1>
+    <!-- Updated Ribbon -->
+    <div class="ribbon">Admin Dashboard</div>
+
     <div class="info-block">
       <h2>Overview</h2>
       <p>Select a section from the sidebar to run queries or view analytics.</p>

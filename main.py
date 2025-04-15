@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="amrit505",
-        database="dbms")
+        password="legio28",
+        database="StreamBerry")
 
 print("Connected to MySQL!")
 
@@ -290,6 +290,28 @@ def top_viewers():
     cursor.close()
     conn.close()
     return render_template('top_viewers.html', users=users)
+
+@app.route('/admin/top-creators')
+def top_creators():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT cr.creator_ID, cr.name, COUNT(c.content_ID) AS total_content
+        FROM creator cr
+        JOIN content c ON cr.creator_ID = c.creator_ID
+        GROUP BY cr.creator_ID, cr.name
+        HAVING COUNT(c.content_ID) > (
+            SELECT AVG(content_count)
+            FROM (
+                SELECT creator_ID, COUNT(content_ID) AS content_count
+                FROM content
+                GROUP BY creator_ID
+            ) AS avg_table
+        );""")
+
+    creators = cursor.fetchall()
+    cursor.close()
+    return render_template('top_creators.html', creators=creators)
 
 @app.route('/expired')
 def show_expired_subscriptions():
