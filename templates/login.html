@@ -151,7 +151,7 @@
       {% endif %}
     {% endwith %}
 
-    <form id="loginForm" method="POST" action="/auth">
+    <form method="POST" action="/auth">
       <input type="text" name="name" placeholder="Name" required>
       <input type="password" name="email" placeholder="Email" required>
       <input type="submit" value="Sign In">
@@ -194,9 +194,6 @@
         splash.style.opacity = '0';
         splash.style.visibility = 'hidden';
 
-        // Submit the form after splash screen is hidden
-        // You can redirect to a dashboard or any other page here
-        window.location.href = "/select-profile"; // Example: redirect to dashboard
       }, 4000); // Show splash screen for 4 seconds
     });
   </script>

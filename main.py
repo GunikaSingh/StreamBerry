@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="legio28",
-        database="StreamBerry")
+        password="amrit505",
+        database="dbms")
 
 print("Connected to MySQL!")
 
@@ -31,6 +31,7 @@ def auth():
         session['user_id'] = user['user_ID']
         session['name'] = user['name']
         cursor.execute("SELECT profile_ID, prof_name FROM Profile WHERE user_ID = %s", (user['user_ID'],))
+        print (user['user_ID'])
         profiles = cursor.fetchall()
         cursor.close()
         conn.close()
